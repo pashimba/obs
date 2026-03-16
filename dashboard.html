@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Proyectos - StreamMaker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="dashboard.html" class="brand">
+      <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path><rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
+      StreamMaker
+    </a>
+    <div class="nav-actions">
+      <button class="btn btn-secondary">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        Plantillas
+      </button>
+      <a href="profile.html" class="user-avatar" title="Mi Perfil" style="text-decoration: none; color: white;">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=40&auto=format&fit=crop" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="U">
+      </a>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <div class="dashboard-header">
+      <div>
+        <h1>Mis Proyectos de Stream</h1>
+        <p>Selecciona un proyecto para abrir el lienzo de edición o crea uno nuevo.</p>
+      </div>
+      <a href="editor.html" class="btn btn-primary">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Nuevo Proyecto
+      </a>
+    </div>
+
+    <div class="projects-grid">
+      <!-- New Project Action -->
+      <a href="editor.html" class="glass-panel project-card new-project">
+        <div class="new-project-icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <span>Crear Lienzo Vacío</span>
+      </a>
+
+      <!-- Existing Project 1 -->
+      <a href="editor.html" class="glass-panel project-card">
+        <div class="project-thumb" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop'); background-size: cover; background-position: center;">
+        </div>
+        <div class="project-info">
+          <div class="project-title">Stream Valorant Fin de Semana</div>
+          <div class="project-meta">Editado hace 2 horas • 3 Escenas</div>
+        </div>
+      </a>
+
+      <!-- Existing Project 2 -->
+      <a href="editor.html" class="glass-panel project-card">
+        <div class="project-thumb"></div>
+        <div class="project-info">
+          <div class="project-title">Charla "Just Chatting"</div>
+          <div class="project-meta">Editado hace 2 días • 1 Escena</div>
+        </div>
+      </a>
+
+       <!-- Existing Project 3 -->
+       <a href="editor.html" class="glass-panel project-card">
+        <div class="project-thumb" style="background-image: url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=600&auto=format&fit=crop'); background-size: cover; background-position: center;"></div>
+        <div class="project-info">
+          <div class="project-title">Torneo eSports</div>
+          <div class="project-meta">Editado hace 1 semana • 5 Escenas</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

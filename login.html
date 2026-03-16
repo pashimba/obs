@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamMaker - Iniciar Sesión</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="#" class="brand">
+      <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path><rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
+      StreamMaker
+    </a>
+  </nav>
+
+  <div class="auth-container">
+    <div class="glass-panel auth-card">
+      <h2>Bienvenido de vuelta</h2>
+      <p>Inicia sesión para acceder a tu estudio de streaming en la nube.</p>
+      
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" class="input-control" placeholder="tu@email.com" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" class="input-control" placeholder="••••••••" required>
+        </div>
+        
+        <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          Entrar a StreamMaker
+        </button>
+      </form>
+
+      <div class="divider">o continúa con</div>
+
+      <div class="social-login">
+        <a href="dashboard.html" class="btn-social">
+          <svg style="color:#9146FF" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+          Twitch
+        </a>
+        <a href="dashboard.html" class="btn-social">
+          <svg style="color:#FF0000" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
+      </div>
+      
+      <p style="margin-top: 2rem; font-size: 0.85rem;">
+        ¿No tienes cuenta? <a href="#" style="color: var(--brand-color); text-decoration: none;">Regístrate</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevent actual form submission
+      
+      // Visual feedback
+      const originalText = submitBtn.textContent;
+      submitBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite; width:20px;height:20px;">
+          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="4"></circle>
+          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg> Entrando...
+      `;
+      submitBtn.style.opacity = '0.8';
+      submitBtn.style.pointerEvents = 'none';
+
+      // Fake network request delay
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

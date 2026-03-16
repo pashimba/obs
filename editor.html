@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Visual - StreamMaker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div style="display: flex; align-items: center; gap: 2rem;">
+      <a href="dashboard.html" class="brand" title="Volver al inicio">
+        <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path><rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
+      </a>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <h3 style="font-weight: 500;">Stream Valorant Fin de Semana</h3>
+        <span style="font-size: 0.75rem; color: var(--success-color); background: rgba(16, 185, 129, 0.1); padding: 0.2rem 0.6rem; border-radius: 12px;">Guardado</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
+        <svg viewBox="0 0 24 24" style="width:16px; height:16px;"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+        Cloud Engine Activo
+      </div>
+      <a href="#go-live-modal" class="btn btn-primary" style="background: var(--danger-color); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+        INICIAR TRANSMISIÓN
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Editor Area -->
+  <div class="editor-layout">
+    
+    <!-- Left Sidebar: Components -->
+    <aside class="sidebar-left">
+      <div class="sidebar-header">Añadir Componentes</div>
+      <div class="components-list">
+        
+        <div class="component-item" title="Arrastra al lienzo">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Captura de Pantalla</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Juego, Ventana, Navegador</div>
+          </div>
+        </div>
+
+        <div class="component-item">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Cámara</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Webcam local</div>
+          </div>
+        </div>
+
+        <div class="component-item">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Audio / Micrófono</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Fuentes de sonido</div>
+          </div>
+        </div>
+
+        <div class="component-item">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Caja de Chat</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Chat de Twitch/YT</div>
+          </div>
+        </div>
+
+        <div class="component-item">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Alertas</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Follows, Donaciones</div>
+          </div>
+        </div>
+
+        <div class="component-item">
+          <div class="comp-icon"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></div>
+          <div>
+            <div style="font-weight: 500; font-size: 0.9rem;">Texto Libre</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Etiquetas, Títulos</div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Center Workspace (Lienzo) -->
+    <main class="workspace">
+      
+      <div class="glass-panel workspace-toolbar">
+        <button class="tool-btn" title="Deshacer"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M3 13a9 9 0 1 1 3 7"></path></svg></button>
+        <button class="tool-btn" title="Rehacer"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"></path><path d="M21 13a9 9 0 1 0-3 7"></path></svg></button>
+        <div style="width: 1px; background: var(--panel-border); margin: 4px;"></div>
+        <button class="tool-btn" title="Ajustar Lienzo"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg></button>
+        <div style="padding: 0 10px; display:flex; align-items:center; color: var(--text-muted); font-size: 0.8rem;">16:9 • 1920x1080</div>
+      </div>
+
+      <!-- The Canvas / Lienzo -->
+      <div class="canvas-container" id="main-canvas">
+        
+        <!-- Mock Elements inside Canvas -->
+        <div class="canvas-element mock-chat" id="el-chat" style="z-index: 10; left: 20px; top: 320px; bottom: auto;">
+          <div class="chat-msg"><span>GamerPro:</span> ¡Increíble jugada!</div>
+          <div class="chat-msg"><span>NinjaFan:</span> ¿Cuándo juegas el torneo?</div>
+          <div class="chat-msg"><span>NoobMaster:</span> jajaja qué buen fail</div>
+        </div>
+
+        <div class="canvas-element mock-alert" id="el-alert" style="z-index: 30; left: 330px; top: 40px; transform: none; bottom: auto;">
+          <svg viewBox="0 0 24 24" style="color: #fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          ¡Nuevo Seguidor: Xx_Slayer_xX!
+        </div>
+
+        <div class="canvas-element mock-webcam selected" id="el-webcam" style="z-index: 20; left: 700px; top: 385px; right: auto; bottom: auto;">
+          <!-- Custom border/frame effect -->
+          <div style="position:absolute; bottom:5px; left:10px; font-size:0.8rem; font-weight:bold; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px;">Mi Cámara</div>
+        </div>
+      </div>
+
+      <div class="workspace-footer">
+        <div class="status-item">
+          <div class="status-indicator"></div>
+          OFFLINE
+        </div>
+        <div class="status-item">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          CPU Server: 12%
+        </div>
+        <div class="status-item">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px"><polygon points="12 2 19 21 12 17 5 21 12 2"></polygon></svg>
+          Latencia: 32ms
+        </div>
+        <div class="status-item">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          1080p 60FPS
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Right Sidebar: Properties & Layers -->
+    <aside class="sidebar-right">
+      <div class="tabs">
+        <div class="tab active" id="tab-props">Propiedades</div>
+        <div class="tab" id="tab-layers">Capas</div>
+      </div>
+      
+      <div class="properties-panel" id="panel-props">
+        <div style="margin-bottom: 2rem;">
+          <h4 id="prop-title" style="color: var(--text-main); margin-bottom: 0.5rem; display: flex; align-items: centre; gap: 0.5rem;">
+            <svg viewBox="0 0 24 24" style="color:var(--brand-color);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            Mi Cámara
+          </h4>
+          <p style="font-size: 0.75rem;">Modifica los ajustes del elemento seleccionado.</p>
+        </div>
+
+        <div class="prop-group">
+          <label>Dispositivo de Origen</label>
+          <select class="prop-input" style="appearance: none;">
+            <option>Logitech HD Pro Webcam C920</option>
+            <option>OBS Virtual Camera</option>
+            <option>Cámara Integrada</option>
+          </select>
+        </div>
+
+        <div class="prop-group">
+          <label>Transformación</label>
+          <div class="prop-row" style="align-items:center;">
+            <span style="font-size:12px;color:gray;">X:</span>
+            <input type="number" id="prop-x" class="prop-input" value="700">
+            <span style="font-size:12px;color:gray;">Y:</span>
+            <input type="number" id="prop-y" class="prop-input" value="385">
+          </div>
+          <div class="prop-row" style="margin-top: 5px; align-items:center;">
+            <span style="font-size:12px;color:gray;">W:</span>
+            <input type="number" id="prop-w" class="prop-input" value="240">
+            <span style="font-size:12px;color:gray;">H:</span>
+            <input type="number" id="prop-h" class="prop-input" value="135">
+          </div>
+        </div>
+
+        <div class="prop-group">
+          <label>Filtros Básicos</label>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-main);">
+              <span>Esquinas Redondeadas</span> <span id="val-radius">8px</span>
+            </div>
+            <input type="range" id="prop-radius" class="prop-input" style="padding: 0;" min="0" max="50" value="8">
+            
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-main); margin-top: 10px;">
+              <span>Opacidad</span> <span id="val-opacity">100%</span>
+            </div>
+            <input type="range" id="prop-opacity" class="prop-input" style="padding: 0;" min="0" max="100" value="100">
+          </div>
+        </div>
+        
+        <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-top: 1rem;">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          Añadir Marco (Overlay)
+        </button>
+        <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-top: 0.5rem; color: var(--danger-color);">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Eliminar Elemento
+        </button>
+
+      </div>
+
+      <!-- Minimizado de capas para el prototipo visual -->
+      <div id="panel-layers" style="display:none; flex: 1; flex-direction: column; overflow-y: auto;">
+        <div class="sidebar-header" style="border-top: none;">Orden de Capas</div>
+        <div class="layers-list">
+          <div class="layer-item" data-ref="el-alert">
+            <div class="layer-name"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg> Alertas Streamlabs</div>
+            <svg viewBox="0 0 24 24" style="color:var(--text-muted)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div class="layer-item active" data-ref="el-webcam">
+            <div class="layer-name"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path></svg> Mi Cámara</div>
+            <svg viewBox="0 0 24 24" style="color:var(--text-muted)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div class="layer-item" data-ref="el-chat">
+            <div class="layer-name"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7"></path></svg> Chat Twitch</div>
+            <svg viewBox="0 0 24 24" style="color:var(--text-muted)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div class="layer-item">
+            <div class="layer-name"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect></svg> Captura: Valorant</div>
+            <svg viewBox="0 0 24 24" style="color:var(--text-muted)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Modal: Iniciar Transmisión -->
+  <div id="go-live-modal" class="modal-overlay">
+    <div class="glass-panel modal-content">
+      <a href="#" class="close-modal">&times;</a>
+      <h2 style="margin-bottom: 0.5rem; text-align: center;">Configurar Multistreaming</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Tu escena será procesada en nuestros servidores. Selecciona tus destinos.</p>
+
+      <div class="platform-select">
+        <label class="platform-btn active" id="platformTwitch">
+          <svg style="color:#9146FF; width:32px; height:32px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+          <span style="font-weight: 500;">Twitch</span>
+          <span style="font-size:0.75rem; color:var(--success-color);">Conectado</span>
+          <input type="checkbox" checked style="display:none;">
+        </label>
+        
+        <label class="platform-btn" id="platformYoutube">
+          <svg style="color:#FF0000; width:32px; height:32px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span style="font-weight: 500;">YouTube</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Añadir Cuenta</span>
+          <input type="checkbox" style="display:none;">
+        </label>
+      </div>
+
+      <div class="input-group">
+        <label>Título del Stream</label>
+        <input type="text" class="input-control" value="Probando StreamMaker - Jugando Valorant!">
+      </div>
+      <div class="input-group">
+        <label>Categoría / Juego</label>
+        <input type="text" class="input-control" value="Valorant">
+      </div>
+
+      <a href="#" id="startStreamBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; text-align: center; background: var(--danger-color); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); padding: 0.8rem; font-size: 1rem;">
+        ¡EMPEZAR A TRANSMITIR!
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // --- TABS LOGIC ---
+    const tabProps = document.getElementById('tab-props');
+    const tabLayers = document.getElementById('tab-layers');
+    const panelProps = document.getElementById('panel-props');
+    const panelLayers = document.getElementById('panel-layers');
+
+    tabProps.addEventListener('click', () => {
+      tabProps.classList.add('active');
+      tabLayers.classList.remove('active');
+      panelProps.style.display = 'block';
+      panelLayers.style.display = 'none';
+    });
+
+    tabLayers.addEventListener('click', () => {
+      tabLayers.classList.add('active');
+      tabProps.classList.remove('active');
+      panelLayers.style.display = 'flex';
+      panelProps.style.display = 'none';
+    });
+
+    // --- CANVAS INTERACTION & PROPERTIES ---
+    const canvas = document.getElementById('main-canvas');
+    const elements = document.querySelectorAll('.canvas-element');
+    const propTitle = document.getElementById('prop-title');
+    
+    // Inputs
+    const inputX = document.getElementById('prop-x');
+    const inputY = document.getElementById('prop-y');
+    const inputW = document.getElementById('prop-w');
+    const inputH = document.getElementById('prop-h');
+    const inputRadius = document.getElementById('prop-radius');
+    const inputOpacity = document.getElementById('prop-opacity');
+    
+    const valRadius = document.getElementById('val-radius');
+    const valOpacity = document.getElementById('val-opacity');
+
+    let activeElement = document.getElementById('el-webcam'); // default
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let elemStartX = 0, elemStartY = 0;
+
+    // Layer list syncing
+    const layerItems = document.querySelectorAll('.layer-item[data-ref]');
+
+    function updatePropertiesSidebar() {
+      if(!activeElement) return;
+      
+      let currentLeft = parseInt(activeElement.style.left) || 0;
+      let currentTop = parseInt(activeElement.style.top) || 0;
+      let currentW = activeElement.offsetWidth;
+      let currentH = activeElement.offsetHeight;
+      
+      inputX.value = currentLeft;
+      inputY.value = currentTop;
+      inputW.value = currentW;
+      inputH.value = currentH;
+      
+      let computedRadius = window.getComputedStyle(activeElement).borderRadius;
+      let radiusVal = parseInt(computedRadius) || 0;
+      inputRadius.value = radiusVal;
+      valRadius.textContent = radiusVal + 'px';
+      
+      let computedOpacity = window.getComputedStyle(activeElement).opacity;
+      let opVal = Math.round(parseFloat(computedOpacity) * 100) || 100;
+      inputOpacity.value = opVal;
+      valOpacity.textContent = opVal + '%';
+
+      // Update Header
+      if(activeElement.id === 'el-webcam') {
+        propTitle.innerHTML = `<svg viewBox="0 0 24 24" style="color:var(--brand-color);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Mi Cámara`;
+      } else if (activeElement.id === 'el-alert') {
+        propTitle.innerHTML = `<svg viewBox="0 0 24 24" style="color:var(--brand-color);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Alerta`;
+      } else if (activeElement.id === 'el-chat') {
+        propTitle.innerHTML = `<svg viewBox="0 0 24 24" style="color:var(--brand-color);"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7"></path></svg> Chat`;
+      }
+
+      // Sync layer active state
+      layerItems.forEach(item => {
+        if(item.dataset.ref === activeElement.id) item.classList.add('active');
+        else item.classList.remove('active');
+      });
+    }
+
+    function selectElement(el) {
+      elements.forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      activeElement = el;
+      // Bring to front slightly
+      el.style.zIndex = parseInt(window.getComputedStyle(el).zIndex) + 1;
+      updatePropertiesSidebar();
+    }
+
+    // Attach events to canvas elements
+    elements.forEach(el => {
+      el.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        selectElement(el);
+        startX = e.clientX;
+        startY = e.clientY;
+        elemStartX = parseInt(el.style.left) || 0;
+        elemStartY = parseInt(el.style.top) || 0;
+        e.stopPropagation(); 
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if(!isDragging || !activeElement) return;
+      let dx = e.clientX - startX;
+      let dy = e.clientY - startY;
+      
+      let newX = elemStartX + dx;
+      let newY = elemStartY + dy;
+      
+      activeElement.style.left = newX + 'px';
+      activeElement.style.top = newY + 'px';
+      
+      inputX.value = newX;
+      inputY.value = newY;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      // Clicked on empty canvas space
+      elements.forEach(e => e.classList.remove('selected'));
+      activeElement = null;
+      layerItems.forEach(item => item.classList.remove('active'));
+    });
+
+    // Input bindings
+    function applyInput() {
+      if(!activeElement) return;
+      activeElement.style.left = inputX.value + 'px';
+      activeElement.style.top = inputY.value + 'px';
+      activeElement.style.width = inputW.value + 'px';
+      activeElement.style.height = inputH.value + 'px';
+    }
+    inputX.addEventListener('input', applyInput);
+    inputY.addEventListener('input', applyInput);
+    inputW.addEventListener('input', applyInput);
+    inputH.addEventListener('input', applyInput);
+
+    inputRadius.addEventListener('input', (e) => {
+      if(!activeElement) return;
+      let val = e.target.value;
+      activeElement.style.borderRadius = val + 'px';
+      valRadius.textContent = val + 'px';
+    });
+
+    inputOpacity.addEventListener('input', (e) => {
+      if(!activeElement) return;
+      let val = e.target.value;
+      activeElement.style.opacity = val / 100;
+      valOpacity.textContent = val + '%';
+    });
+
+    // Layer click
+    layerItems.forEach(item => {
+      item.addEventListener('click', () => {
+        let targetId = item.dataset.ref;
+        if(targetId) {
+          let targetEl = document.getElementById(targetId);
+          if(targetEl) selectElement(targetEl);
+        }
+      });
+    });
+
+    // GO LIVE MODAL LOGIC
+    const platTwitch = document.getElementById('platformTwitch');
+    const platYoutube = document.getElementById('platformYoutube');
+    const startStreamBtn = document.getElementById('startStreamBtn');
+
+    platTwitch.addEventListener('click', () => platTwitch.classList.toggle('active'));
+    platYoutube.addEventListener('click', () => platYoutube.classList.toggle('active'));
+
+    startStreamBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const originalHtml = startStreamBtn.innerHTML;
+      startStreamBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite; width:20px;height:20px;"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="4"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg> 
+        CONECTANDO...
+      `;
+      startStreamBtn.style.pointerEvents = 'none';
+      startStreamBtn.style.opacity = '0.8';
+
+      setTimeout(() => {
+        alert('¡Transmisión Iniciada en la nube de StreamMaker!');
+        window.location.hash = ''; // close modal
+        startStreamBtn.innerHTML = originalHtml;
+        startStreamBtn.style.pointerEvents = 'auto';
+        startStreamBtn.style.opacity = '1';
+        
+        // Cámbiar status del canvas
+        const ind = document.querySelector('.status-indicator');
+        if(ind) {
+          ind.classList.add('live');
+          ind.nextSibling.textContent = " EN DIRECTO - 00:00:01";
+        }
+      }, 1500);
+    });
+
+    // INIT
+    updatePropertiesSidebar();
+  </script>
+</body>
+</html>
