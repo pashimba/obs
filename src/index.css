@@ -1,0 +1,56 @@
+:root {
+  --bg-darkest: #050506;
+  --bg-panel: rgba(18, 18, 22, 0.85);
+  --bg-stage: #0f0f12;
+  --accent: #8b5cf6;
+  --accent-soft: rgba(139, 92, 246, 0.15);
+  --border: rgba(255, 255, 255, 0.06);
+  --text-main: #f1f5f9;
+  --text-muted: #64748b;
+  --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    "Inter",
+    -apple-system,
+    system-ui,
+    sans-serif;
+  background-color: var(--bg-darkest);
+  color: var(--text-main);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar invisible pero funcional */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+/* Mixin para Paneles Glass */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: var(--panel-shadow);
+}
+
+/* Tooltip sutil */
+.info-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
