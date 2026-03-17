@@ -1,82 +1,519 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StreamMaker - Iniciar Sesión</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    /* ── Estilos extra del login con OAuth ── */
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-logo svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .oauth-notice {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .oauth-notice a {
+      color: var(--brand-color);
+      text-decoration: none;
+    }
+
+    /* Botón de Google personalizado */
+    #google-btn-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    #google-btn-wrapper>div {
+      width: 100% !important;
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+
+    /* Botón Twitch */
+    #twitch-btn {
+      background: rgba(145, 70, 255, 0.15);
+      border: 1px solid rgba(145, 70, 255, 0.4);
+      color: #bf94ff;
+    }
+
+    #twitch-btn:hover {
+      background: rgba(145, 70, 255, 0.28);
+      border-color: #9146ff;
+      color: #fff;
+    }
+
+    /* Botón YouTube */
+    #youtube-btn {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.35);
+      color: #ff7070;
+    }
+
+    #youtube-btn:hover {
+      background: rgba(255, 0, 0, 0.22);
+      border-color: #ff0000;
+      color: #fff;
+    }
+
+    .btn-social svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Toast notification */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e2235;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 0.8rem 1.4rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 999;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #toast .toast-icon {
+      font-size: 1.1rem;
+    }
+
+    /* Loading spinner */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-btn {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+
+    /* Sesión activa */
+    #session-banner {
+      display: none;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+
+    #session-banner.active {
+      display: block;
+    }
+
+    #session-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 0.6rem;
+      display: block;
+      border: 2px solid var(--success-color);
+    }
+
+    #session-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    #session-provider {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+    }
+
+    #go-dashboard-btn {
+      background: var(--brand-gradient);
+      color: white;
+      border: none;
+      padding: 0.55rem 1.4rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+
+    #logout-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    #logout-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+  </style>
 </head>
+
 <body>
 
   <nav class="navbar">
     <a href="#" class="brand">
-      <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path><rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
+      <svg viewBox="0 0 24 24">
+        <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path>
+        <rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect>
+      </svg>
       StreamMaker
     </a>
   </nav>
 
   <div class="auth-container">
     <div class="glass-panel auth-card">
-      <h2>Bienvenido de vuelta</h2>
-      <p>Inicia sesión para acceder a tu estudio de streaming en la nube.</p>
-      
-      <form id="loginForm">
-        <div class="input-group">
-          <label for="email">Correo Electrónico</label>
-          <input type="email" id="email" class="input-control" placeholder="tu@email.com" required>
-        </div>
-        <div class="input-group">
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" class="input-control" placeholder="••••••••" required>
-        </div>
-        
-        <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-          Entrar a StreamMaker
-        </button>
-      </form>
 
-      <div class="divider">o continúa con</div>
-
-      <div class="social-login">
-        <a href="dashboard.html" class="btn-social">
-          <svg style="color:#9146FF" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
-          Twitch
-        </a>
-        <a href="dashboard.html" class="btn-social">
-          <svg style="color:#FF0000" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          YouTube
-        </a>
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="url(#grad)" stroke-width="2">
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+          </defs>
+          <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path>
+          <rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect>
+        </svg>
       </div>
-      
-      <p style="margin-top: 2rem; font-size: 0.85rem;">
-        ¿No tienes cuenta? <a href="#" style="color: var(--brand-color); text-decoration: none;">Regístrate</a>
-      </p>
+
+      <h2>Bienvenido de vuelta</h2>
+      <p>Inicia sesión con tu cuenta preferida para acceder a tu estudio.</p>
+
+      <!-- Banner sesión activa -->
+      <div id="session-banner">
+        <img id="session-avatar" src="" alt="Avatar">
+        <div id="session-name"></div>
+        <div id="session-provider"></div>
+        <button id="go-dashboard-btn" onclick="window.location.href='dashboard.html'">Ir al dashboard →</button>
+        <button id="logout-btn" onclick="logout()">Cerrar sesión</button>
+      </div>
+
+      <!-- Formulario (se oculta cuando hay sesión) -->
+      <div id="login-form-area">
+        <div class="divider">Inicia sesión con</div>
+
+        <div class="social-login">
+
+          <!-- Google / YouTube -->
+          <div id="google-btn-wrapper"></div>
+
+          <!-- Twitch -->
+          <button id="twitch-btn" class="btn-social" onclick="loginWithTwitch()">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path
+                d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
+            </svg>
+            Continuar con Twitch
+          </button>
+
+          <!-- YouTube (Google OAuth con scope YouTube) -->
+          <button id="youtube-btn" class="btn-social" onclick="loginWithYouTube()">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path
+                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
+            Continuar con YouTube (Google)
+          </button>
+
+        </div>
+
+        <p class="oauth-notice">
+          Al iniciar sesión aceptas los <a href="#">Términos de Servicio</a> y la <a href="#">Política de
+            Privacidad</a>.<br>
+          No almacenamos contraseñas. Tu sesión es gestionada por el proveedor elegido.
+        </p>
+      </div>
+
     </div>
   </div>
 
+  <!-- Toast global -->
+  <div id="toast">
+    <span class="toast-icon" id="toast-icon">✓</span>
+    <span id="toast-msg"></span>
+  </div>
+
   <script>
-    const loginForm = document.getElementById('loginForm');
-    const submitBtn = document.getElementById('submitBtn');
+    /* ═══════════════════════════════════════════════
+       CONFIGURACIÓN — Reemplaza con tus credenciales
+       ═══════════════════════════════════════════════ */
+    const CONFIG = {
+      // Google Cloud Console → APIs & Services → Credentials
+      GOOGLE_CLIENT_ID: '260789164552-g97pg4682kt3e1ic2dt1od17qiqlr1vl.apps.googleusercontent.com',
 
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault(); // Prevent actual form submission
-      
-      // Visual feedback
-      const originalText = submitBtn.textContent;
-      submitBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite; width:20px;height:20px;">
-          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="4"></circle>
-          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-        </svg> Entrando...
-      `;
-      submitBtn.style.opacity = '0.8';
-      submitBtn.style.pointerEvents = 'none';
+      // Twitch Developer Console → https://dev.twitch.tv/console
+      TWITCH_CLIENT_ID: 'TU_TWITCH_CLIENT_ID',
 
-      // Fake network request delay
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1500);
+      // URI exacta que registraste en cada consola de desarrollador
+      // Para pruebas locales usa: http://localhost (sirve un index o login.html)
+      REDIRECT_URI: window.location.origin + window.location.pathname,
+    };
+
+    /* ═══════════════════════════════════════
+       UTILIDADES: Toast, sesión, localStorage
+       ═══════════════════════════════════════ */
+    function showToast(msg, type = 'ok') {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      document.getElementById('toast-icon').textContent = type === 'ok' ? '✓' : type === 'err' ? '✗' : 'ℹ';
+      t.style.background = type === 'ok' ? '#0d2b20' : type === 'err' ? '#2b0d0d' : '#1e2235';
+      t.style.borderColor = type === 'ok' ? 'rgba(16,185,129,0.4)' : type === 'err' ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.12)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    function saveSession(provider, name, email, picture) {
+      const session = { provider, name, email, picture, ts: Date.now() };
+      localStorage.setItem('sm_session', JSON.stringify(session));
+    }
+
+    function getSession() {
+      try { return JSON.parse(localStorage.getItem('sm_session')); } catch { return null; }
+    }
+
+    function logout() {
+      localStorage.removeItem('sm_session');
+      google.accounts.id.disableAutoSelect();
+      checkExistingSession();
+      showToast('Sesión cerrada', 'info');
+    }
+
+    function checkExistingSession() {
+      const s = getSession();
+      const banner = document.getElementById('session-banner');
+      const form = document.getElementById('login-form-area');
+      if (s) {
+        document.getElementById('session-avatar').src = s.picture || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(s.name) + '&background=6366f1&color=fff';
+        document.getElementById('session-name').textContent = s.name;
+        document.getElementById('session-provider').textContent = '· Conectado con ' + s.provider;
+        banner.classList.add('active');
+        form.style.display = 'none';
+      } else {
+        banner.classList.remove('active');
+        form.style.display = 'block';
+      }
+    }
+
+    /* ═══════════════════════════════
+       GOOGLE / YOUTUBE — Google GSI
+       ═══════════════════════════════ */
+    function initGoogleAuth() {
+      if (typeof google === 'undefined') {
+        // La librería aún no cargó, reintentar en 500ms
+        setTimeout(initGoogleAuth, 500);
+        return;
+      }
+
+      google.accounts.id.initialize({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        callback: handleGoogleResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+
+      // Botón estilo Google oficial
+      google.accounts.id.renderButton(
+        document.getElementById('google-btn-wrapper'),
+        {
+          theme: 'filled_black',
+          size: 'large',
+          shape: 'rectangular',
+          width: 376,
+          text: 'continue_with',
+          locale: 'es',
+        }
+      );
+    }
+
+    function handleGoogleResponse(response) {
+      if (!response || !response.credential) {
+        showToast('No se pudo completar el inicio de sesión con Google', 'err');
+        return;
+      }
+      try {
+        // Decodificar el JWT de Google sin librería (solo base64)
+        const payload = JSON.parse(atob(response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        const name = payload.name || payload.email;
+        const email = payload.email || '';
+        const picture = payload.picture || '';
+
+        saveSession('Google', name, email, picture);
+        showToast('¡Bienvenido, ' + name.split(' ')[0] + '!', 'ok');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+      } catch (e) {
+        showToast('Error al procesar tu cuenta de Google', 'err');
+        console.error(e);
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       YOUTUBE — usa Google OAuth con scope YouTube extra
+       (flujo de redirección con Google Identity Services)
+       ══════════════════════════════════════════════════════ */
+    function loginWithYouTube() {
+      // YouTube usa la misma cuenta Google pero pedimos scope de YouTube
+      // Usamos el flujo OAuth 2 implícito de Google para obtener un access_token
+      const params = new URLSearchParams({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        redirect_uri: CONFIG.REDIRECT_URI,
+        response_type: 'token id_token',
+        scope: 'openid profile email https://www.googleapis.com/auth/youtube.readonly',
+        nonce: Math.random().toString(36).slice(2),
+        prompt: 'select_account',
+      });
+
+      // Guardamos el proveedor destino para cuando volvamos del redirect
+      sessionStorage.setItem('sm_oauth_provider', 'YouTube');
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+    }
+
+    /* ════════════════════════════════════════════
+       TWITCH — Flujo OAuth Implicit (token en URL)
+       ════════════════════════════════════════════ */
+    function loginWithTwitch() {
+      const btn = document.getElementById('twitch-btn');
+      btn.innerHTML = '<span class="spinner"></span> Conectando con Twitch…';
+      btn.classList.add('loading-btn');
+
+      const params = new URLSearchParams({
+        client_id: CONFIG.TWITCH_CLIENT_ID,
+        redirect_uri: CONFIG.REDIRECT_URI,
+        response_type: 'token',
+        scope: 'user:read:email',
+        state: Math.random().toString(36).slice(2),
+      });
+
+      sessionStorage.setItem('sm_oauth_provider', 'Twitch');
+      window.location.href = 'https://id.twitch.tv/oauth2/authorize?' + params.toString();
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MANEJO DEL REDIRECT — detecta el token en la URL (#)
+       ═══════════════════════════════════════════════════════ */
+    async function handleOAuthRedirect() {
+      const hash = window.location.hash.substring(1);
+      const search = window.location.search.substring(1);
+      const params = new URLSearchParams(hash || search);
+      const provider = sessionStorage.getItem('sm_oauth_provider');
+
+      if (!provider) return;
+
+      const accessToken = params.get('access_token');
+      const idToken = params.get('id_token');
+
+      // Limpiar la URL del hash/token para no exponerlo
+      window.history.replaceState({}, document.title, window.location.pathname);
+      sessionStorage.removeItem('sm_oauth_provider');
+
+      if (!accessToken && !idToken) return;
+
+      showToast('Verificando tu cuenta…', 'info');
+
+      try {
+        if (provider === 'Twitch' && accessToken) {
+          // Obtener datos del usuario Twitch con el access_token
+          const res = await fetch('https://api.twitch.tv/helix/users', {
+            headers: {
+              'Authorization': 'Bearer ' + accessToken,
+              'Client-Id': CONFIG.TWITCH_CLIENT_ID,
+            }
+          });
+          if (!res.ok) throw new Error('Twitch API error: ' + res.status);
+          const data = await res.json();
+          const user = data.data[0];
+          saveSession('Twitch', user.display_name, user.email || '', user.profile_image_url || '');
+          showToast('¡Bienvenido, ' + user.display_name + '!', 'ok');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+
+        } else if (provider === 'YouTube' && idToken) {
+          // Decodificar id_token de Google (igual que handleGoogleResponse)
+          const payload = JSON.parse(atob(idToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+          saveSession('YouTube (Google)', payload.name || payload.email, payload.email || '', payload.picture || '');
+          showToast('¡Bienvenido, ' + (payload.name || payload.email) + '!', 'ok');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+
+        } else if (provider === 'YouTube' && accessToken && !idToken) {
+          // Fallback: solo access_token de Google → buscar info con userinfo
+          const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { 'Authorization': 'Bearer ' + accessToken }
+          });
+          const user = await res.json();
+          saveSession('YouTube (Google)', user.name || user.email, user.email || '', user.picture || '');
+          showToast('¡Bienvenido, ' + (user.name || user.email) + '!', 'ok');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+        }
+      } catch (err) {
+        console.error('OAuth redirect error:', err);
+        showToast('Error al verificar tu cuenta. Intenta de nuevo.', 'err');
+      }
+    }
+
+    /* ══════════════════
+       INICIALIZACIÓN
+       ══════════════════ */
+    document.addEventListener('DOMContentLoaded', async () => {
+      await handleOAuthRedirect();   // primero maneja cualquier redirect OAuth
+      checkExistingSession();        // luego revisa si ya hay sesión guardada
+      initGoogleAuth();              // inicializa el botón de Google
     });
   </script>
+
 </body>
+
 </html>
