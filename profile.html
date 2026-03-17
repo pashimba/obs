@@ -169,21 +169,21 @@
           
           <div class="social-login" style="margin-bottom: 1rem;">
             <div class="btn-social" style="justify-content: space-between; padding-right: 1.5rem;">
-              <div style="display:flex; align-items:center; gap:0.8rem;">
-                <svg style="color:#9146FF; width:24px; height:24px;" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
-                <span id="twitchStatusText" style="font-weight: 500;">Twitch (Conectado)</span>
-              </div>
-              <button id="twitchActionBtn" class="btn btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Desvincular</button>
+                <div style="display:flex; align-items:center; gap:0.8rem;">
+                    <svg style="color:#9146FF; width:24px; height:24px;" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                    <span id="twitchStatusText" style="font-weight: 500;">Twitch</span>
+                </div>
+                <button id="twitchActionBtn" class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Vincular</button>
             </div>
 
             <div id="youtubeContainer" class="btn-social" style="justify-content: space-between; padding-right: 1.5rem; background: rgba(0,0,0,0.2);">
-              <div id="youtubeTextContainer" style="display:flex; align-items:center; gap:0.8rem; color: var(--text-muted);">
-                <svg style="width:24px; height:24px;" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <span id="youtubeStatusText" style="font-weight: 500;">YouTube</span>
-              </div>
-              <button id="youtubeActionBtn" class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Vincular</button>
+                <div id="youtubeTextContainer" style="display:flex; align-items:center; gap:0.8rem; color: var(--text-muted);">
+                    <svg style="width:24px; height:24px;" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    <span id="youtubeStatusText" style="font-weight: 500;">YouTube</span>
+                </div>
+                <button id="youtubeActionBtn" class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Vincular</button>
             </div>
-          </div>
+        </div>
 
           <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
             <a href="login.html" class="btn btn-danger" style="text-decoration: none;">Cerrar Sesión</a>
@@ -196,98 +196,138 @@
   </div>
 
   <script>
-    // Referencias al DOM
+    // 1. REFERENCIAS AL DOM
     const changePhotoBtn = document.getElementById('changePhotoBtn');
     const photoInput = document.getElementById('photoInput');
     const profilePhotoContainer = document.getElementById('profilePhotoContainer');
-    
     const saveBtn = document.getElementById('saveBtn');
     const usernameInput = document.getElementById('usernameInput');
     const bioInput = document.getElementById('bioInput');
     const profileNameDisplay = document.getElementById('profileNameDisplay');
     const profileBioDisplay = document.getElementById('profileBioDisplay');
     
-    // Botones sociales
-    const twitchActionBtn = document.getElementById('twitchActionBtn');
-    const twitchStatusText = document.getElementById('twitchStatusText');
-    const youtubeActionBtn = document.getElementById('youtubeActionBtn');
-    const youtubeStatusText = document.getElementById('youtubeStatusText');
+    const twitchBtn = document.getElementById('twitchActionBtn');
+    const twitchStatus = document.getElementById('twitchStatusText');
+    const youtubeBtn = document.getElementById('youtubeActionBtn');
+    const youtubeStatus = document.getElementById('youtubeStatusText');
     const youtubeContainer = document.getElementById('youtubeContainer');
     const youtubeTextContainer = document.getElementById('youtubeTextContainer');
 
-    // Funcionalidad: Cambiar foto (simulada)
-    changePhotoBtn.addEventListener('click', () => {
-      photoInput.click();
+    // 2. CONFIGURACIÓN (Tus llaves de acceso)
+    const CONFIG = {
+        twitch: {
+            clientId: '3vlxzg9k070ro6yiodwmg1xsm4wx6q', 
+            redirectUri: 'http://localhost:5500/profile.html',
+            authUrl: 'https://id.twitch.tv/oauth2/authorize',
+            scopes: 'channel:manage:broadcast user:read:email'
+        },
+        google: {
+            clientId: '802649125974-llidquj3ciubf9tnl5tj6383hmksv5n4.apps.googleusercontent.com', 
+            redirectUri: 'http://localhost:5500/profile.html',
+            authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+            scopes: 'https://www.googleapis.com/auth/youtube.force-ssl'
+        }
+    };
+
+    // 3. LÓGICA DE LOS BOTONES (Conectar / Desconectar)
+    twitchBtn.addEventListener('click', () => {
+        if (!localStorage.getItem('token_twitch')) {
+            // Mandar a Twitch (Agregamos state para identificarlo al volver)
+            window.location.href = `${CONFIG.twitch.authUrl}?client_id=${CONFIG.twitch.clientId}&redirect_uri=${CONFIG.twitch.redirectUri}&response_type=token&scope=${CONFIG.twitch.scopes}&state=twitch`;
+        } else {
+            // Desvincular
+            localStorage.removeItem('token_twitch');
+            alert("Twitch desvinculado, danicito");
+            window.location.href = window.location.pathname; // Recarga limpia
+        }
     });
 
+    youtubeBtn.addEventListener('click', () => {
+        if (!localStorage.getItem('token_google')) {
+            // Mandar a Google
+            window.location.href = `${CONFIG.google.authUrl}?client_id=${CONFIG.google.clientId}&redirect_uri=${CONFIG.google.redirectUri}&response_type=token&scope=${CONFIG.google.scopes}&state=google`;
+        } else {
+            // Desvincular
+            localStorage.removeItem('token_google');
+            alert("YouTube desvinculado");
+            window.location.href = window.location.pathname;
+        }
+    });
+
+    // 4. CAPTURA DEL TOKEN Y ACTUALIZACIÓN DE INTERFAZ AL CARGAR
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        const state = params.get('state');
+
+        // Si regresamos con un Token nuevo
+        if (token) {
+            if (state === 'twitch' || window.location.href.includes('scope=channel')) {
+                localStorage.setItem('token_twitch', token);
+            } else {
+                localStorage.setItem('token_google', token);
+            }
+            alert("¡Cuenta vinculada con éxito, danicito!");
+            // Limpiamos la URL para evitar bucles al recargar
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // --- ACTUALIZAR BOTÓN TWITCH ---
+        if (localStorage.getItem('token_twitch')) {
+            twitchBtn.textContent = "Desvincular";
+            twitchBtn.className = "btn btn-secondary";
+            twitchStatus.textContent = "Twitch (Conectado)";
+        } else {
+            twitchBtn.textContent = "Vincular";
+            twitchBtn.className = "btn btn-primary";
+            twitchStatus.textContent = "Twitch";
+        }
+
+        // --- ACTUALIZAR BOTÓN YOUTUBE ---
+        if (localStorage.getItem('token_google')) {
+            youtubeBtn.textContent = "Desvincular";
+            youtubeBtn.className = "btn btn-secondary";
+            youtubeStatus.textContent = "YouTube (Conectado)";
+            youtubeContainer.style.background = "transparent";
+            youtubeTextContainer.style.color = "var(--text-main)";
+        } else {
+            youtubeBtn.textContent = "Vincular";
+            youtubeBtn.className = "btn btn-primary";
+            youtubeStatus.textContent = "YouTube";
+            youtubeContainer.style.background = "rgba(0,0,0,0.2)";
+            youtubeTextContainer.style.color = "var(--text-muted)";
+        }
+    });
+
+    // 5. FUNCIONALIDADES DE PERFIL (Foto y Guardado)
+    changePhotoBtn.addEventListener('click', () => photoInput.click());
+    
     photoInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        // En un caso real se subiría al servidor, aquí creamos un ObjectURL local para la vista previa
-        const imageUrl = URL.createObjectURL(file);
-        profilePhotoContainer.style.backgroundImage = `url('${imageUrl}')`;
-      }
+        const file = e.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            profilePhotoContainer.style.backgroundImage = `url('${imageUrl}')`;
+        }
     });
 
-    // Funcionalidad: Guardar Cambios
     saveBtn.addEventListener('click', () => {
-      // Tomamos los valores
-      const newName = usernameInput.value.trim();
-      const newBio = bioInput.value.trim();
-      
-      if (newName) {
-        profileNameDisplay.textContent = `${newName} (Usuario)`;
-      }
-      if (newBio) {
-        profileBioDisplay.textContent = newBio;
-      }
-      
-      // Feedback visual del botón
-      const originalText = saveBtn.textContent;
-      saveBtn.textContent = '¡Guardado!';
-      saveBtn.style.background = 'var(--success-color)';
-      saveBtn.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
-      
-      setTimeout(() => {
-        saveBtn.textContent = originalText;
-        saveBtn.style.background = '';
-        saveBtn.style.boxShadow = '';
-      }, 2000);
+        const newName = usernameInput.value.trim();
+        const newBio = bioInput.value.trim();
+        if (newName) profileNameDisplay.textContent = `${newName} (Usuario)`;
+        if (newBio) profileBioDisplay.textContent = newBio;
+        
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = '¡Guardado!';
+        saveBtn.style.background = 'var(--success-color)';
+        saveBtn.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
+        
+        setTimeout(() => {
+            saveBtn.textContent = originalText;
+            saveBtn.style.background = '';
+            saveBtn.style.boxShadow = '';
+        }, 2000);
     });
-
-    // Funcionalidad: Vincular/Desvincular Twitch
-    let isTwitchLinked = true;
-    twitchActionBtn.addEventListener('click', () => {
-      isTwitchLinked = !isTwitchLinked;
-      if (isTwitchLinked) {
-        twitchActionBtn.textContent = 'Desvincular';
-        twitchActionBtn.className = 'btn btn-secondary';
-        twitchStatusText.textContent = 'Twitch (Conectado)';
-      } else {
-        twitchActionBtn.textContent = 'Vincular';
-        twitchActionBtn.className = 'btn btn-primary';
-        twitchStatusText.textContent = 'Twitch';
-      }
-    });
-
-    // Funcionalidad: Vincular/Desvincular YouTube
-    let isYoutubeLinked = false;
-    youtubeActionBtn.addEventListener('click', () => {
-      isYoutubeLinked = !isYoutubeLinked;
-      if (isYoutubeLinked) {
-        youtubeActionBtn.textContent = 'Desvincular';
-        youtubeActionBtn.className = 'btn btn-secondary';
-        youtubeStatusText.textContent = 'YouTube (Conectado)';
-        youtubeContainer.style.background = 'transparent';
-        youtubeTextContainer.style.color = 'var(--text-main)';
-      } else {
-        youtubeActionBtn.textContent = 'Vincular';
-        youtubeActionBtn.className = 'btn btn-primary';
-        youtubeStatusText.textContent = 'YouTube';
-        youtubeContainer.style.background = 'rgba(0,0,0,0.2)';
-        youtubeTextContainer.style.color = 'var(--text-muted)';
-      }
-    });
-  </script>
+</script>
 </body>
 </html>
