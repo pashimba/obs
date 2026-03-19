@@ -1,0 +1,4 @@
+/* Tailwind CSS directives – must appear before all other CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
