@@ -237,7 +237,7 @@
         } else {
             // Desvincular
             localStorage.removeItem('token_twitch');
-            alert("Twitch desvinculado, danicito");
+            alert("Twitch desvinculado");
             window.location.href = window.location.pathname; // Recarga limpia
         }
     });
@@ -268,7 +268,7 @@
             } else {
                 localStorage.setItem('token_google', token);
             }
-            alert("¡Cuenta vinculada con éxito, danicito!");
+            alert("¡Cuenta vinculada con éxito");
             // Limpiamos la URL para evitar bucles al recargar
             window.history.replaceState({}, document.title, window.location.pathname);
         }

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editor Visual - StreamMaker</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -103,8 +104,12 @@
 
       <!-- The Canvas / Lienzo -->
       <div class="canvas-container" id="main-canvas">
+    <video id="livePreview" autoplay muted 
+           style="position:absolute; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none; border-radius:8px;">
+    </video>
+
+    <div id="capa-overlays" style="position:absolute; width:100%; height:100%; top:0; left:0; z-index:10; pointer-events:none;">
         
-        <!-- Mock Elements inside Canvas -->
         <div class="canvas-element mock-chat" id="el-chat" style="z-index: 10; left: 20px; top: 320px; bottom: auto;">
           <div class="chat-msg"><span>GamerPro:</span> ¡Increíble jugada!</div>
           <div class="chat-msg"><span>NinjaFan:</span> ¿Cuándo juegas el torneo?</div>
@@ -117,15 +122,16 @@
         </div>
 
         <div class="canvas-element mock-webcam selected" id="el-webcam" style="z-index: 20; left: 700px; top: 385px; right: auto; bottom: auto;">
-          <!-- Custom border/frame effect -->
           <div style="position:absolute; bottom:5px; left:10px; font-size:0.8rem; font-weight:bold; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px;">Mi Cámara</div>
         </div>
-      </div>
+        
+    </div>
+</div>
 
       <div class="workspace-footer">
         <div class="status-item">
           <div class="status-indicator"></div>
-          OFFLINE
+          <span id="streamTime">OFFLINE</span>
         </div>
         <div class="status-item">
           <svg viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
@@ -274,65 +280,142 @@
     </div>
   </div>
 
-  <script>
-    // 1. REFERENCIAS DEL EDITOR
-    const startStreamBtn = document.getElementById('startStreamBtn');
-    const platformTwitch = document.getElementById('platformTwitch');
-    const platformYoutube = document.getElementById('platformYoutube');
-    const mainCanvas = document.querySelector('.canvas-container'); // Tu lienzo
+ <script>
+    // 1. VARIABLES GLOBALES
+    let esTransmitiendo = false;
+    let cronometro;
+    let segundosTranscurridos = 0;
+    let mediaRecorder;
+    let chunks = [];
+    let screenStream; 
 
-    // 2. VERIFICAR CONEXIÓN AL CARGAR
-    window.addEventListener('load', () => {
-        const hasTwitch = localStorage.getItem('token_twitch');
-        const hasYoutube = localStorage.getItem('token_google');
+    // Procesamiento de video
+    const canvasOculto = document.createElement('canvas');
+    const ctx = canvasOculto.getContext('2d');
+    const videoInterno = document.createElement('video');
+    videoInterno.muted = true;
+    videoInterno.setAttribute('playsinline', '');
 
-        // Actualizamos visualmente el modal según lo que vinculaste en el perfil
-        if (hasTwitch) {
-            platformTwitch.classList.add('active');
-            platformTwitch.querySelector('span:last-child').textContent = "Conectado";
-            platformTwitch.querySelector('span:last-child').style.color = "var(--success-color)";
+    const startModalBtn = document.getElementById('startStreamBtn'); 
+    const navStreamBtn = document.querySelector('.nav-actions .btn-primary');
+    const statusIndicator = document.querySelector('.status-indicator');
+    const streamTimeDisplay = document.getElementById('streamTime');
+    const workspaceLienzo = document.getElementById('main-canvas');
+    const livePreview = document.getElementById('livePreview');
+    const capaOverlays = document.getElementById('capa-overlays');
+
+    let ultimoSnapshotUI = null; // Aquí guardamos la imagen de los overlays
+
+    // 2. FUNCIÓN DE RENDERIZADO (El secreto contra el parpadeo)
+    async function iniciarCapturaReal() {
+        try {
+            // Pedimos permiso de pantalla
+            screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: { width: 1280, height: 720, frameRate: 30 },
+                audio: false
+            });
+
+            // Mostramos en el editor y en el procesador interno
+            videoInterno.srcObject = screenStream;
+            await videoInterno.play();
+            
+            if (livePreview) {
+                livePreview.srcObject = screenStream;
+                livePreview.play();
+            }
+
+            chunks = [];
+            canvasOculto.width = 1280;
+            canvasOculto.height = 720;
+            
+            const streamFinal = canvasOculto.captureStream(30);
+            mediaRecorder = new MediaRecorder(streamFinal, { mimeType: 'video/webm; codecs=vp8' });
+            mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+            mediaRecorder.start(1000);
+
+            // BUCLE DE DIBUJO PROFESIONAL
+            function renderLoop() {
+                if (!esTransmitiendo) return;
+
+                // CAPA 1: Fondo (Video de pantalla) - Se dibuja siempre primero
+                if (videoInterno.readyState >= 2) {
+                    ctx.drawImage(videoInterno, 0, 0, 1280, 720);
+                }
+
+                // CAPA 2: Overlays (Chat/Alertas) - Dibujamos el último snapshot disponible
+                if (ultimoSnapshotUI) {
+                    ctx.drawImage(ultimoSnapshotUI, 0, 0, 1280, 720);
+                }
+
+                // Generamos un nuevo snapshot de la UI de forma asíncrona
+                html2canvas(capaOverlays, { 
+                    backgroundColor: null,
+                    scale: 1,
+                    logging: false
+                }).then(canvas => {
+                    ultimoSnapshotUI = canvas;
+                });
+
+                requestAnimationFrame(renderLoop);
+            }
+            renderLoop();
+
+        } catch (err) {
+            console.error("Error:", err);
+            detenerTodo();
         }
-
-        if (hasYoutube) {
-            platformYoutube.classList.add('active');
-            platformYoutube.querySelector('span:last-child').textContent = "Conectado";
-            platformYoutube.querySelector('span:last-child').style.color = "var(--success-color)";
-        }
-    });
-
-    // 3. FUNCIÓN PARA CAPTURAR EL LIENZO (La clave técnica)
-    function capturarEscena() {
-        // html2canvas o captureStream son opciones. 
-        // Como usas un contenedor DIV como lienzo, simulamos la captura del flujo:
-        console.log("Capturando elementos del DOM en el lienzo...");
-        
-        // Si fuera un <canvas> real, usaríamos: mainCanvas.captureStream(30);
-        return "stream_data_active";
     }
 
-    // 4. LÓGICA DE INICIAR TRANSMISIÓN
-    startStreamBtn.addEventListener('click', (e) => {
+    // 3. LÓGICA DE BOTONES
+    startModalBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        
-        const hasTwitch = localStorage.getItem('token_twitch');
-        const hasYoutube = localStorage.getItem('token_google');
-
-        if (!hasTwitch && !hasYoutube) {
-            alert("¡Danicito! No tienes cuentas vinculadas. Ve a tu perfil primero.");
-            window.location.href = 'profile.html';
-            return;
-        }
-
-        // Iniciamos la "transmisión"
-        const stream = capturarEscena();
-        
-        if (stream) {
-            startStreamBtn.textContent = "🔴 TRANSMITIENDO EN VIVO...";
-            startStreamBtn.style.background = "#ef4444";
-            startStreamBtn.style.pointerEvents = "none"; // Evitar doble clic
+        startModalBtn.textContent = "CONECTANDO...";
+        setTimeout(async () => {
+            esTransmitiendo = true;
+            window.location.hash = ""; 
+            navStreamBtn.innerHTML = '🔴 TERMINAR STREAM';
+            navStreamBtn.style.background = "#374151"; 
+            statusIndicator.style.background = "#ef4444";
             
-            alert("¡Éxito! Tu stream de Valorant está saliendo al servidor.");
-            console.log("Enviando flujo con tokens:", { twitch: hasTwitch, yt: hasYoutube });
+            segundosTranscurridos = 0;
+            cronometro = setInterval(() => {
+                segundosTranscurridos++;
+                const h = Math.floor(segundosTranscurridos / 3600).toString().padStart(2, '0');
+                const m = Math.floor((segundosTranscurridos % 3600) / 60).toString().padStart(2, '0');
+                const s = (segundosTranscurridos % 60).toString().padStart(2, '0');
+                streamTimeDisplay.textContent = `EN VIVO • ${h}:${m}:${s}`;
+            }, 1000);
+
+            await iniciarCapturaReal();
+        }, 800);
+    });
+
+    function detenerTodo() {
+        esTransmitiendo = false;
+        clearInterval(cronometro);
+        if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+        if (screenStream) screenStream.getTracks().forEach(t => t.stop());
+        if (livePreview) livePreview.srcObject = null;
+        streamTimeDisplay.textContent = "OFFLINE";
+        statusIndicator.style.background = "#94a3b8";
+        navStreamBtn.innerHTML = 'INICIAR TRANSMISIÓN';
+        navStreamBtn.style.background = "var(--danger-color)";
+    }
+
+    navStreamBtn.addEventListener('click', (e) => {
+        if (esTransmitiendo) {
+            e.preventDefault();
+            if (confirm("¿Finalizar, danicito?")) {
+                detenerTodo();
+                setTimeout(() => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `stream_${Date.now()}.webm`;
+                    a.click();
+                }, 500);
+            }
         }
     });
 </script>
